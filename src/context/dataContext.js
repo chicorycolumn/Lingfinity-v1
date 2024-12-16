@@ -17,6 +17,7 @@ export const DataProvider = ({ children }) => {
   const [totalCorrect, setTotalCorrect] = useState(0);
   const [scoreJustReceived, setScoreJustReceived] = useState(0);
   const [optionsHaveChanged, setOptionsHaveChanged] = useState();
+  const [useDummyData, setUseDummyData] = useState();
 
   // Display Controlling States
   const [showStart, setShowStart] = useState(true);
@@ -58,38 +59,40 @@ export const DataProvider = ({ children }) => {
     let formulaDifficulty = null;
     let iterations = 2;
 
-    // let dummyDatums = [
-    //   {
-    //     question: "Sekretarka je melony.",
-    //     answers: ["The secretary eats melons."],
-    //     datum: {
-    //       questionSentenceArr: ["Sekretarka je melony."],
-    //       answerSentenceArr: ["The secretary eats melons."],
-    //     },
-    //     allAnswers: [],
-    //   },
-    //   {
-    //     question: "Śledcza je kukurydze.",
-    //     answers: [
-    //       "The detective eats maize.",
-    //       "The detective eats corn.",
-    //       "The investigator eats maize.",
-    //       "The investigator eats corn.",
-    //     ],
-    //     datum: {
-    //       questionSentenceArr: ["Śledcza je kukurydze."],
-    //       answerSentenceArr: [
-    //         "The detective eats maize.",
-    //         "The detective eats corn.",
-    //         "The investigator eats maize.",
-    //         "The investigator eats corn.",
-    //       ],
-    //     },
-    //     allAnswers: [],
-    //   },
-    // ];
-    // setQuiz(dummyDatums);
-    // return;
+    if (useDummyData) {
+      let dummyDatums = [
+        {
+          question: "Sekretarka je melony.",
+          answers: ["The secretary eats melons."],
+          datum: {
+            questionSentenceArr: ["Sekretarka je melony."],
+            answerSentenceArr: ["The secretary eats melons."],
+          },
+          allAnswers: [],
+        },
+        {
+          question: "Śledcza je kukurydze.",
+          answers: [
+            "The detective eats maize.",
+            "The detective eats corn.",
+            "The investigator eats maize.",
+            "The investigator eats corn.",
+          ],
+          datum: {
+            questionSentenceArr: ["Śledcza je kukurydze."],
+            answerSentenceArr: [
+              "The detective eats maize.",
+              "The detective eats corn.",
+              "The investigator eats maize.",
+              "The investigator eats corn.",
+            ],
+          },
+          allAnswers: [],
+        },
+      ];
+      setQuiz(dummyDatums);
+      return;
+    }
 
     getUtils
       .fetchPalette(
@@ -195,6 +198,8 @@ export const DataProvider = ({ children }) => {
         scoreJustReceived,
         totalCorrect,
         setOptionsHaveChanged,
+        useDummyData,
+        setUseDummyData,
       }}
     >
       {children}

@@ -3,7 +3,8 @@ import DataContext from "../context/dataContext";
 import mainLogo from ".././logo_512.png";
 
 const Start = () => {
-  const { startQuiz, showStart } = useContext(DataContext);
+  const { startQuiz, showStart, useDummyData, setUseDummyData } =
+    useContext(DataContext);
   let roundNames = ["Round 1"];
 
   return (
@@ -11,6 +12,12 @@ const Start = () => {
       className="text-white text-center bg-dark"
       style={{ display: `${showStart ? "block" : "none"}`, height: "100vh" }}
     >
+      <button
+        onClick={() => {
+          setUseDummyData((prev) => !prev);
+        }}
+        style={{ position: "absolute", right: 0, width: "140px" }}
+      >{`${useDummyData ? "Using dummy 🤡" : "Use dummy data"}`}</button>
       <div className="container" style={{ display: "block", height: "100%" }}>
         <div
           className="row align-items-center justify-content-center"

@@ -260,24 +260,32 @@ const Quiz = () => {
                 <div>
                   {round?.datums.map((cuestion, cuestionIndex) => (
                     <div
-                      className={`option w-100 text-start btn text-white py-1 px-3 pt-3 mt-3 rounded btn-dark`} //${correctAnswer === item && "bg-success"}
+                      key={`summaryDiv-${cuestionIndex}`}
+                      className={`option w-100 text-start btn text-white pt-1 pb-3 px-3 pt-3 mt-3 rounded btn-dark`} //${correctAnswer === item && "bg-success"}
                     >
                       <p
-                        key={`summaryQuestion${cuestionIndex}`}
+                        key={`summaryQuestion-${cuestionIndex}`}
                         className={`h4`}
                       >{`${cuestionIndex + 1}. ${cuestion.question}`}</p>
-                      <p className={`mt-3`}>{`${dispU.convertMarkToEmoji(
-                        cuestion.yourMark
-                      )} ${cuestion.yourAnswer}`}</p>
+                      <p
+                        key={`summaryMark-${cuestionIndex}`}
+                        className={`mt-3`}
+                      >{`${dispU.convertMarkToEmoji(cuestion.yourMark)} ${
+                        cuestion.yourAnswer
+                      }`}</p>
 
-                      <>
+                      <div key={`summaryAnswers-${cuestionIndex}`}>
                         {cuestion.answers.map((answer, answerIndex) => (
                           <p
                             key={`summaryAnswer${cuestionIndex}-${answerIndex}`}
-                            className={`fw-bold`}
-                          >{`👉 ${answer}`}</p>
+                            className={`my-0 ${
+                              cuestion.yourMark < 1 ? "fw-bold" : "fst-italic"
+                            }`}
+                          >{`${
+                            cuestion.yourMark < 1 ? "👉" : " "
+                          } ${answer}`}</p>
                         ))}
-                      </>
+                      </div>
                     </div>
                   ))}
                   <button
