@@ -35,6 +35,15 @@ export const fetchPalette = (
       let responseObjArr = res.data;
       console.log(">>>", responseObjArr.length);
       responseObjArr.forEach((responseObj) => console.log(responseObj));
-      return responseObjArr;
+      return responseObjArr.map((responseObj) => formatCuestion(responseObj));
     });
+};
+
+export const formatCuestion = (datum) => {
+  let question = datum.questionSentenceArr[0];
+  let answers = datum.answerSentenceArr;
+
+  let cuestion = { question, answers, datum, allAnswers: [] };
+
+  return cuestion;
 };

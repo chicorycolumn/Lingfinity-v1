@@ -25,3 +25,18 @@ export const capitalise = (s) => {
     return s[0].toUpperCase() + s.slice(1);
   }
 };
+
+export const convertMarkToEmoji = (mark) => {
+  if (mark > 1) {
+    return "🏆";
+  }
+  if (mark === 1) {
+    return "✅";
+  }
+  if (mark > 0) {
+    return "🆗";
+  }
+  if (mark === 0) {
+    return "❌";
+  }
+};

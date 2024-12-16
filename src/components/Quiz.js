@@ -35,7 +35,7 @@ const Quiz = () => {
     const listenForEscape = (event) => {
       if (event.key === "Escape") {
         event.preventDefault();
-        document.getElementById("exit_button").click();
+        exitQuiz();
       }
     };
 
@@ -82,21 +82,19 @@ const Quiz = () => {
   };
 
   const wereYouCorrect = () => {
-    let baseColor = "#3d3d3d";
+    let color = "#3d3d3d";
 
     if (cuestion && Object.keys(cuestion).includes("yourMark")) {
       if (cuestion.yourMark === 1) {
-        return "bg-success";
-      }
-      if (cuestion.yourMark === 0.5) {
-        return "bg-warning";
-      }
-      if (cuestion.yourMark === 0) {
-        return "bg-danger";
+        color = "bg-success";
+      } else if (cuestion.yourMark === 0.5) {
+        color = "bg-warning";
+      } else if (cuestion.yourMark === 0) {
+        color = "bg-danger";
       }
     }
 
-    return baseColor;
+    return color;
   };
 
   const getPercentage = () => {
@@ -108,6 +106,19 @@ const Quiz = () => {
     );
   };
 
+  const exitQuiz = (bypassConfirmation = false) => {
+    if (
+      bypassConfirmation ||
+      window.confirm("Are you sure you want to exit? Your score will be reset.")
+    ) {
+      setPlayerInput("");
+      setShowOptions();
+      setOptions([]);
+
+      returnToStart();
+    }
+  };
+
   return (
     <section
       className="bg-dark text-white"
@@ -115,140 +126,171 @@ const Quiz = () => {
     >
       <div className="container">
         <div className="row vh-100 align-items-start justify-content-center">
-          {showSummary ? (
-            <p>let's show summary</p>
-          ) : (
-            <div className="col-lg-8 pb-5">
-              <div className="d-flex flex-column justify-content-between align-items-center gap-md-3 px-1">
-                <div className="mt-3 d-flex w-100 justify-content-between align-items-center gap-md-3 px-1">
-                  <div className="w-25 d-flex justify-content-left">
-                    <button
-                      id="exit_button"
-                      className="btn w-5 h-25 bg-primarycolordark text-light px-2 mb-1"
-                      style={{
-                        height: "8px",
-                        paddingTop: 0.5,
-                        paddingBottom: 0.5,
-                      }}
-                      onClick={() => {
-                        if (
-                          window.confirm(
-                            "Are you sure you want to exit? Your score will be reset."
-                          )
-                        ) {
-                          setPlayerInput("");
-                          setShowOptions();
-                          setOptions([]);
-
-                          returnToStart();
-                        }
-                      }}
-                    >
-                      EXIT
-                    </button>
-                  </div>
-                  <div className="w-50 d-flex justify-content-center">
-                    <h5 className="fs-normal lh-base text-right primarycolor">
-                      {`${score}`}
-                    </h5>
-                  </div>
-                  <div className="w-25 d-flex justify-content-end">
-                    <h5
-                      className="fs-normal lh-base text-right primarycolor"
-                      onClick={() => {
-                        console.log({ round });
-                      }}
-                    >
-                      {`${getPercentage()}%`}
-                    </h5>
-                  </div>
-                </div>
-
-                <h5 className="mt-2 mb-2 fs-normal lh-base text-left">
-                  {round?.title}
-                </h5>
-              </div>
-
-              {options.length ? (
-                <div>
+          <div className="col-lg-8 pb-5">
+            <div className="d-flex flex-column justify-content-between align-items-center gap-md-3 px-1">
+              <div className="mt-3 d-flex w-100 justify-content-between align-items-center gap-md-3 px-1">
+                <div className="w-25 d-flex justify-content-left">
                   <button
+                    id="exit_button"
+                    className="btn w-5 h-25 bg-primarycolordark text-light px-2 mb-1"
                     style={{
-                      background: "none",
-                      color: "white",
-                      fontSize: "10px",
-                      width: "77.5px",
+                      height: "8px",
+                      paddingTop: 0.5,
+                      paddingBottom: 0.5,
                     }}
-                    onClick={(e) => {
-                      e.preventDefault();
-                      if (showOptions) {
-                        wrapperMoveForward();
-                      }
-                      setShowOptions((prev) => !prev);
-                      setTimeout(() => {
-                        if (round?.selectedOptions) {
-                          round.selectedOptions.forEach((selectedOption) => {
-                            let el = document.getElementById(
-                              `option-${selectedOption}`
-                            );
-                            if (el) {
-                              el.checked = true;
-                            }
-                          });
-                        }
-                      }, 50);
+                    onClick={exitQuiz}
+                  >
+                    EXIT
+                  </button>
+                </div>
+                <div className="w-50 d-flex justify-content-center">
+                  <h5 className="fs-normal lh-base text-right primarycolor">
+                    {`${score}`}
+                  </h5>
+                </div>
+                <div className="w-25 d-flex justify-content-end">
+                  <h5
+                    className="fs-normal lh-base text-right primarycolor"
+                    onClick={() => {
+                      console.log({ round });
                     }}
                   >
-                    {`${showOptions ? "Save" : "Show"} options`}
-                  </button>
-                  {showOptions
-                    ? options.map((option, optionIndex) => {
-                        if (option.type === "name") {
-                          return (
-                            <p
-                              className="my-0"
-                              key={`${optionIndex}-name-${option.combined}`}
-                            >
-                              {option.value.toUpperCase()}
-                            </p>
-                          );
-                        }
-                        return (
-                          <div key={`${optionIndex}-value-${option.combined}`}>
-                            <input
-                              type="checkbox"
-                              id={`option-${option.combined}`}
-                              name={`option-${option.combined}`}
-                              onChange={(e) => {
-                                e.stopPropagation();
-                                setRound((prev) => {
-                                  if (!prev.selectedOptions) {
-                                    prev.selectedOptions = [];
-                                  }
-                                  if (e.target.checked) {
-                                    prev.selectedOptions.push(option.combined);
-                                  } else {
-                                    prev.selectedOptions =
-                                      prev.selectedOptions.filter(
-                                        (x) => x !== option.combined
-                                      );
-                                  }
-                                  return prev;
-                                });
-                                setOptionsHaveChanged(true);
-                              }}
-                            />
-                            <label htmlFor={`option-${option.combined}`}>
-                              {dispU.capitalise(option.value)}
-                            </label>
-                          </div>
-                        );
-                      })
-                    : ""}
+                    {`${getPercentage()}%`}
+                  </h5>
                 </div>
-              ) : (
-                ""
-              )}
+              </div>
 
+              <h5 className="mt-2 mb-2 fs-normal lh-base text-left">
+                {round?.title}
+              </h5>
+            </div>
+
+            {options.length ? (
+              <div>
+                <button
+                  style={{
+                    background: "none",
+                    color: "white",
+                    fontSize: "10px",
+                    width: "77.5px",
+                  }}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    if (showOptions) {
+                      wrapperMoveForward();
+                    }
+                    setShowOptions((prev) => !prev);
+                    setTimeout(() => {
+                      if (round?.selectedOptions) {
+                        round.selectedOptions.forEach((selectedOption) => {
+                          let el = document.getElementById(
+                            `option-${selectedOption}`
+                          );
+                          if (el) {
+                            el.checked = true;
+                          }
+                        });
+                      }
+                    }, 50);
+                  }}
+                >
+                  {`${showOptions ? "Save" : "Show"} options`}
+                </button>
+                {showOptions
+                  ? options.map((option, optionIndex) => {
+                      if (option.type === "name") {
+                        return (
+                          <p
+                            className="my-0"
+                            key={`${optionIndex}-name-${option.combined}`}
+                          >
+                            {option.value.toUpperCase()}
+                          </p>
+                        );
+                      }
+                      return (
+                        <div key={`${optionIndex}-value-${option.combined}`}>
+                          <input
+                            type="checkbox"
+                            id={`option-${option.combined}`}
+                            name={`option-${option.combined}`}
+                            onChange={(e) => {
+                              e.stopPropagation();
+                              setRound((prev) => {
+                                if (!prev.selectedOptions) {
+                                  prev.selectedOptions = [];
+                                }
+                                if (e.target.checked) {
+                                  prev.selectedOptions.push(option.combined);
+                                } else {
+                                  prev.selectedOptions =
+                                    prev.selectedOptions.filter(
+                                      (x) => x !== option.combined
+                                    );
+                                }
+                                return prev;
+                              });
+                              setOptionsHaveChanged(true);
+                            }}
+                          />
+                          <label htmlFor={`option-${option.combined}`}>
+                            {dispU.capitalise(option.value)}
+                          </label>
+                        </div>
+                      );
+                    })
+                  : ""}
+              </div>
+            ) : (
+              ""
+            )}
+
+            {showSummary ? (
+              <div
+                className="card p-4"
+                style={{
+                  background: "#3d3d3d",
+                  borderColor: "#646464",
+                  borderWidth: "1px",
+                }}
+              >
+                <div className="d-flex justify-content-center gap-md-3">
+                  <h5 className="mb-2 fs-normal lh-base">{`Results: ${getPercentage()}%`}</h5>
+                </div>
+                <div>
+                  {round?.datums.map((cuestion, cuestionIndex) => (
+                    <div
+                      className={`option w-100 text-start btn text-white py-1 px-3 pt-3 mt-3 rounded btn-dark`} //${correctAnswer === item && "bg-success"}
+                    >
+                      <p
+                        key={`summaryQuestion${cuestionIndex}`}
+                        className={`h4`}
+                      >{`${cuestionIndex + 1}. ${cuestion.question}`}</p>
+                      <p className={`mt-3`}>{`${dispU.convertMarkToEmoji(
+                        cuestion.yourMark
+                      )} ${cuestion.yourAnswer}`}</p>
+
+                      <>
+                        {cuestion.answers.map((answer, answerIndex) => (
+                          <p
+                            key={`summaryAnswer${cuestionIndex}-${answerIndex}`}
+                            className={`fw-bold`}
+                          >{`👉 ${answer}`}</p>
+                        ))}
+                      </>
+                    </div>
+                  ))}
+                  <button
+                    onClick={() => {
+                      exitQuiz(true);
+                    }}
+                    className={`option w-100 text-center btn text-white py-2 px-3 mt-3 rounded btn-dark bg-success`}
+                  >
+                    Return to main menu
+                  </button>
+                </div>
+              </div>
+            ) : (
               <div
                 className="card p-4"
                 style={{
@@ -346,8 +388,8 @@ const Quiz = () => {
                   )}
                 </div>
               </div>
-            </div>
-          )}
+            )}
+          </div>
         </div>
       </div>
     </section>

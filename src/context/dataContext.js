@@ -1,6 +1,5 @@
 import { createContext, useState, useEffect } from "react";
 const dataU = require("../utils/dataUtils.js");
-const quizU = require("../utils/quizUtils.js");
 const getUtils = require("../utils/getUtils.js");
 const uUtils = require("../utils/universalUtils.js");
 const executors = require("../utils/executors.js").executors;
@@ -32,10 +31,7 @@ export const DataProvider = ({ children }) => {
     if (round) {
       if (round?.datums.length > cuestionIndex) {
         setCuestion((prevCuestion) => {
-          let makeCuestion = quizU.makeCuestion;
-
-          let newCuestion = makeCuestion(round, prevCuestion, cuestionIndex);
-          return newCuestion;
+          return round.datums[cuestionIndex];
         });
       } else {
         if (cuestionIndex === 0) {
@@ -47,6 +43,12 @@ export const DataProvider = ({ children }) => {
     }
   }, [round, cuestionIndex]);
 
+  const setQuiz = (datums) => {
+    setRound({ title: "Title here", datums, ignorePunctuation: true });
+    setShowStart(false);
+    setShowRound(true);
+  };
+
   // Start Quiz
   const startQuiz = (filename) => {
     let beEnv = "prod";
@@ -55,6 +57,39 @@ export const DataProvider = ({ children }) => {
     let formulaTopics = null;
     let formulaDifficulty = null;
     let iterations = 2;
+
+    // let dummyDatums = [
+    //   {
+    //     question: "Sekretarka je melony.",
+    //     answers: ["The secretary eats melons."],
+    //     datum: {
+    //       questionSentenceArr: ["Sekretarka je melony."],
+    //       answerSentenceArr: ["The secretary eats melons."],
+    //     },
+    //     allAnswers: [],
+    //   },
+    //   {
+    //     question: "Śledcza je kukurydze.",
+    //     answers: [
+    //       "The detective eats maize.",
+    //       "The detective eats corn.",
+    //       "The investigator eats maize.",
+    //       "The investigator eats corn.",
+    //     ],
+    //     datum: {
+    //       questionSentenceArr: ["Śledcza je kukurydze."],
+    //       answerSentenceArr: [
+    //         "The detective eats maize.",
+    //         "The detective eats corn.",
+    //         "The investigator eats maize.",
+    //         "The investigator eats corn.",
+    //       ],
+    //     },
+    //     allAnswers: [],
+    //   },
+    // ];
+    // setQuiz(dummyDatums);
+    // return;
 
     getUtils
       .fetchPalette(
@@ -66,9 +101,7 @@ export const DataProvider = ({ children }) => {
         iterations
       )
       .then((datums) => {
-        setRound({ datums });
-        setShowStart(false);
-        setShowRound(true);
+        setQuiz(datums);
       });
   };
 
@@ -125,9 +158,11 @@ export const DataProvider = ({ children }) => {
 
   // Start Over
   const returnToStart = () => {
-    setRound();
-    setShowStart(true);
     setShowRound(false);
+    setShowSummary(false);
+    setRound();
+    setCuestion();
+    setShowStart(true);
     setCuestionIsFinished();
     setSelectedAnswer("");
     setCuestionIndex(0);
