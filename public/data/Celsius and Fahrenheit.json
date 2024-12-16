@@ -1,5 +1,0 @@
-{
-  "title": "Celsius and Fahrenheit",
-  "executor": "celsiusFahrenheit",
-  "options": ["extreme temperatures"]
-}

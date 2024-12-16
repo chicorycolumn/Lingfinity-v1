@@ -1,6 +1,7 @@
 import { createContext, useState, useEffect } from "react";
 const dataU = require("../utils/dataUtils.js");
 const quizU = require("../utils/quizUtils.js");
+const getUtils = require("../utils/getUtils.js");
 const uUtils = require("../utils/universalUtils.js");
 const executors = require("../utils/executors.js").executors;
 
@@ -21,52 +22,51 @@ export const DataProvider = ({ children }) => {
   // Display Controlling States
   const [showStart, setShowStart] = useState(true);
   const [showRound, setShowRound] = useState(false);
+  const [showSummary, setShowSummary] = useState(false);
 
   // // Load JSON Data
   // useEffect(() => {}, []);
 
   // Set a Single Cuestion
   useEffect(() => {
-    setCuestion((prevCuestion) => {
-      if (round) {
-        if (round.datums && !(cuestionIndex % round.datums.length)) {
-          uUtils.shuffle(round.datums);
+    if (round) {
+      if (round?.datums.length > cuestionIndex) {
+        setCuestion((prevCuestion) => {
+          let makeCuestion = quizU.makeCuestion;
+
+          let newCuestion = makeCuestion(round, prevCuestion, cuestionIndex);
+          return newCuestion;
+        });
+      } else {
+        if (cuestionIndex === 0) {
+          alert("Something went wrong, no questions generated for this round.");
+        } else {
+          setShowSummary(true);
         }
-
-        let makeCuestion = round.executor
-          ? executors[round.executor]
-          : quizU.makeCuestion;
-
-        let newCuestion = makeCuestion(round, prevCuestion, cuestionIndex);
-        return newCuestion;
       }
-    });
+    }
   }, [round, cuestionIndex]);
 
   // Start Quiz
   const startQuiz = (filename) => {
-    fetch(`data/${filename}.json`)
-      .then((res) => res.json())
-      .then((data) => {
-        if (data.categories && data.datums) {
-          data.categories.forEach((category) => {
-            if (!data.options) {
-              data.options = [];
-            }
-            data.datums.forEach((datum) => {
-              datum[category].split("//").forEach((value) => {
-                let optionString = `${category}::${value}`;
+    let beEnv = "prod";
+    let langQ = "POL";
+    let langA = "ENG";
+    let formulaTopics = null;
+    let formulaDifficulty = null;
+    let iterations = 2;
 
-                if (!data.options.includes(optionString)) {
-                  data.options.push(optionString);
-                }
-              });
-            });
-          });
-          data.categories.sort((x, y) => x.localeCompare(y));
-        }
-
-        setRound(data);
+    getUtils
+      .fetchPalette(
+        beEnv,
+        langQ,
+        langA,
+        formulaTopics,
+        formulaDifficulty,
+        iterations
+      )
+      .then((datums) => {
+        setRound({ datums });
         setShowStart(false);
         setShowRound(true);
       });
@@ -146,6 +146,7 @@ export const DataProvider = ({ children }) => {
         startQuiz,
         showStart,
         showRound,
+        showSummary,
         cuestion,
         round,
         setRound,
