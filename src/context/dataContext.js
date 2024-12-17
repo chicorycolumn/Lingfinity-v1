@@ -1,6 +1,7 @@
 import { createContext, useState, useEffect } from "react";
 const dataU = require("../utils/dataUtils.js");
 const getUtils = require("../utils/getUtils.js");
+const efUtils = require("../utils/efficiencyUtils.js");
 const uUtils = require("../utils/universalUtils.js");
 const executors = require("../utils/executors.js").executors;
 
@@ -17,7 +18,7 @@ export const DataProvider = ({ children }) => {
   const [totalCorrect, setTotalCorrect] = useState(0);
   const [scoreJustReceived, setScoreJustReceived] = useState(0);
   const [optionsHaveChanged, setOptionsHaveChanged] = useState();
-  const [useDummyData, setUseDummyData] = useState(true);
+  const [useDummyData, setUseDummyData] = useState();
 
   // Display Controlling States
   const [showStart, setShowStart] = useState(true);
@@ -45,7 +46,30 @@ export const DataProvider = ({ children }) => {
   }, [round, cuestionIndex]);
 
   const setQuiz = (datums) => {
-    setRound({ title: "Title here", datums, ignorePunctuation: true });
+    setRound((prev) => {
+      if (!prev) {
+        return {
+          title: "Title here",
+          datums,
+          ignorePunctuation: true,
+          meaninglessCounter: 0,
+        };
+      }
+
+      let updatedRound = {};
+      Object.keys(prev).forEach((roundKey) => {
+        let value = prev[roundKey];
+        if (Array.isArray(value)) {
+          value = [...value];
+        }
+
+        updatedRound[roundKey] = value;
+      });
+
+      updatedRound["datums"].push(...datums);
+
+      return updatedRound;
+    });
     setShowStart(false);
     setShowRound(true);
   };
@@ -57,7 +81,6 @@ export const DataProvider = ({ children }) => {
     let langA = "ENG";
     let formulaTopics = null;
     let formulaDifficulty = null;
-    let iterations = 4;
 
     if (useDummyData) {
       let dummyDatums = [
@@ -94,18 +117,31 @@ export const DataProvider = ({ children }) => {
       return;
     }
 
-    getUtils
-      .fetchPalette(
-        beEnv,
-        langQ,
-        langA,
-        formulaTopics,
-        formulaDifficulty,
-        iterations
-      )
-      .then((datums) => {
-        setQuiz(datums);
-      });
+    let startTime = Date.now();
+    let timeLimitSeconds = 120;
+
+    const checkTimeout = efUtils.curryCheckTimeout(startTime, timeLimitSeconds);
+
+    const lemon = (datumsTotalLength) => {
+      console.log(`Requesting #${datumsTotalLength + 1}`);
+      getUtils
+        .fetchPalette(beEnv, langQ, langA, formulaTopics, formulaDifficulty)
+        .then((datums) => {
+          console.log(`Got #${datumsTotalLength + 1}`);
+          setQuiz(datums);
+          datumsTotalLength += datums.length;
+
+          if (checkTimeout("fetchPalette")) {
+            return;
+          }
+          if (datumsTotalLength < 10) {
+            lemon(datumsTotalLength);
+          }
+        });
+    };
+
+    let datumsTotalLength = 0;
+    lemon(datumsTotalLength);
   };
 
   // Check Answer

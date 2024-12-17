@@ -33,9 +33,12 @@ export const fetchPalette = (
     )
     .then((res) => {
       let responseObjArr = res.data;
-      console.log(">>>", responseObjArr.length);
-      responseObjArr.forEach((responseObj) => console.log(responseObj));
+      console.log(`Received ${responseObjArr.length}`);
       return responseObjArr.map((responseObj) => formatCuestion(responseObj));
+    })
+    .catch((err) => {
+      console.log("fetchPalette ERROR", err);
+      return [];
     });
 };
 

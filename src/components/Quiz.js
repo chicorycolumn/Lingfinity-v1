@@ -168,6 +168,16 @@ const Quiz = () => {
                   <h5 className="fs-normal lh-base text-right primarycolor">
                     {`${score}`}
                   </h5>
+                  <span
+                    style={{
+                      position: "absolute",
+                      top: "0",
+                      right: "0",
+                      fontSize: "20px",
+                    }}
+                  >
+                    {`${round?.datums.length} questions loaded.`}
+                  </span>
                 </div>
                 <div className="w-25 d-flex justify-content-end">
                   <h5
