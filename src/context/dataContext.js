@@ -1,5 +1,6 @@
 import { createContext, useState, useEffect } from "react";
 const dataU = require("../utils/dataUtils.js");
+const dispU = require("../utils/displayUtils.js");
 const getUtils = require("../utils/getUtils.js");
 const efUtils = require("../utils/efficiencyUtils.js");
 const uUtils = require("../utils/universalUtils.js");
@@ -46,6 +47,7 @@ export const DataProvider = ({ children }) => {
   }, [round, cuestionIndex]);
 
   const setQuiz = (datums) => {
+    dispU.stopSpinner();
     setRound((prev) => {
       if (!prev) {
         return {
@@ -120,9 +122,13 @@ export const DataProvider = ({ children }) => {
     let startTime = Date.now();
     let timeLimitSeconds = 120;
 
-    const checkTimeout = efUtils.curryCheckTimeout(startTime, timeLimitSeconds);
+    const checkTimeout = efUtils.curryCheckTimeout(
+      startTime,
+      timeLimitSeconds,
+      dispU.stopSpinner
+    );
 
-    const lemon = (datumsTotalLength) => {
+    const fetchPaletteBattery = (datumsTotalLength) => {
       console.log(`Requesting #${datumsTotalLength + 1}`);
       getUtils
         .fetchPalette(beEnv, langQ, langA, formulaTopics, formulaDifficulty)
@@ -135,13 +141,14 @@ export const DataProvider = ({ children }) => {
             return;
           }
           if (datumsTotalLength < 10) {
-            lemon(datumsTotalLength);
+            fetchPaletteBattery(datumsTotalLength);
           }
         });
     };
 
     let datumsTotalLength = 0;
-    lemon(datumsTotalLength);
+    dispU.startSpinner("fuchsia");
+    fetchPaletteBattery(datumsTotalLength);
   };
 
   // Check Answer

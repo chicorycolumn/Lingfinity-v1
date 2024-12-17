@@ -112,3 +112,41 @@ input[type="number"] {
   overflow-y: scroll;
   border: blue solid 2px;
 }
+
+.spinnerHolder {
+  display: none;
+  z-index: 10;
+}
+
+.spinner {
+  border: 16px solid #f3f3f3;
+  border-top: 16px solid blue;
+  border-radius: 50%;
+  width: 120px;
+  height: 120px;
+  animation: spin 2s linear infinite;
+
+  position: fixed;
+  top: calc(50% - 60px);
+  left: calc(50% - 60px);
+  display: block;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.obscurus {
+  width: 100%;
+  height: 100%;
+  background-color: rgba(255, 255, 255, 0.5);
+  z-index: 1;
+  position: fixed;
+  top: 0px;
+  left: 0px;
+}

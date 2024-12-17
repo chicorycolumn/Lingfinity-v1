@@ -6,6 +6,9 @@ import { DataProvider } from "./context/dataContext";
 function App() {
   return (
     <DataProvider>
+      <div className="obscurus spinnerHolder" id="spinnerHolder">
+        <div className="spinner" id="spinner"></div>
+      </div>
       {/* Welcome Page */}
       <Start />
 

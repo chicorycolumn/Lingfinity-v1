@@ -1,4 +1,4 @@
-exports.curryCheckTimeout = (startTime, timeLimitSeconds) => {
+exports.curryCheckTimeout = (startTime, timeLimitSeconds, cb) => {
   return (label) => {
     let currentTime = Date.now();
 
@@ -7,6 +7,7 @@ exports.curryCheckTimeout = (startTime, timeLimitSeconds) => {
       console.log(
         `"${label}" timed out because more than ${timeLimitSeconds} seconds have elapsed since startTime ${startTime}.`
       );
+      cb();
       return true;
     }
   };

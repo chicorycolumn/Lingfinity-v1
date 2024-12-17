@@ -176,7 +176,7 @@ const Quiz = () => {
                       fontSize: "20px",
                     }}
                   >
-                    {`${round?.datums.length} questions loaded.`}
+                    {`${round?.datums.length}/10 questions loaded.`}
                   </span>
                 </div>
                 <div className="w-25 d-flex justify-content-end">

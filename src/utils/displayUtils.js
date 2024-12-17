@@ -40,3 +40,12 @@ export const convertMarkToEmoji = (mark) => {
     return "❌";
   }
 };
+
+export const startSpinner = (color) => {
+  document.getElementById("spinner").style["border-top-color"] = color;
+  document.getElementById("spinnerHolder").style.display = "block";
+};
+
+export const stopSpinner = () => {
+  document.getElementById("spinnerHolder").style.display = "none";
+};
