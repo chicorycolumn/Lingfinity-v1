@@ -121,12 +121,14 @@ const Quiz = () => {
 
   return (
     <section
-      className="bg-dark text-white"
-      style={{ display: `${showRound ? "block" : "none"}` }}
+      className="redCard bg-dark text-white"
+      style={{
+        display: `${showRound ? "flex" : "none"}`,
+      }}
     >
-      <div className="container">
-        <div className="row vh-100 align-items-start justify-content-center">
-          <div className="col-lg-8 pb-5">
+      <div className="orangeCard container">
+        <div className="yellowCard row vh-100 align-items-start justify-content-center">
+          <div className="col-lg-8 pb-5 greenCard">
             <div className="d-flex flex-column justify-content-between align-items-center gap-md-3 px-1">
               <div className="mt-3 d-flex w-100 justify-content-between align-items-center gap-md-3 px-1">
                 <div className="w-25 d-flex justify-content-left">
@@ -246,22 +248,15 @@ const Quiz = () => {
             )}
 
             {showSummary ? (
-              <div
-                className="card p-4"
-                style={{
-                  background: "#3d3d3d",
-                  borderColor: "#646464",
-                  borderWidth: "1px",
-                }}
-              >
-                <div className="d-flex justify-content-center gap-md-3">
+              <div className="cyanCard card p-4">
+                <div className="d-flex justify-content-center gap-md-3 mb-3">
                   <h5 className="mb-2 fs-normal lh-base">{`Results: ${getPercentage()}%`}</h5>
                 </div>
-                <div>
+                <div className="blueCard">
                   {round?.datums.map((cuestion, cuestionIndex) => (
                     <div
                       key={`summaryDiv-${cuestionIndex}`}
-                      className={`option w-100 text-start btn text-white pt-1 pb-3 px-3 pt-3 mt-3 rounded btn-dark`} //${correctAnswer === item && "bg-success"}
+                      className={`option w-100 text-start btn text-white pt-1 pb-3 px-3 pt-3 mb-3 rounded btn-dark`} //${correctAnswer === item && "bg-success"}
                     >
                       <p
                         key={`summaryQuestion-${cuestionIndex}`}
@@ -271,42 +266,46 @@ const Quiz = () => {
                         key={`summaryMark-${cuestionIndex}`}
                         className={`mt-3`}
                       >{`${dispU.convertMarkToEmoji(cuestion.yourMark)} ${
-                        cuestion.yourAnswer
+                        cuestion.yourMark >= 1
+                          ? cuestion.answerYouMatched
+                          : cuestion.yourAnswer
                       }`}</p>
 
                       <div key={`summaryAnswers-${cuestionIndex}`}>
-                        {cuestion.answers.map((answer, answerIndex) => (
-                          <p
-                            key={`summaryAnswer${cuestionIndex}-${answerIndex}`}
-                            className={`my-0 ${
-                              cuestion.yourMark < 1 ? "fw-bold" : "fst-italic"
-                            }`}
-                          >{`${
-                            cuestion.yourMark < 1 ? "👉" : " "
-                          } ${answer}`}</p>
-                        ))}
+                        {cuestion.answers
+                          .filter((answer) => {
+                            if (
+                              cuestion.yourMark >= 1 &&
+                              answer === cuestion.answerYouMatched
+                            ) {
+                              return false;
+                            }
+                            return true;
+                          })
+                          .map((answer, answerIndex) => (
+                            // cuestion.yourMark < 1 ? "fw-bold" : "fst-italic"
+                            <p
+                              key={`summaryAnswer${cuestionIndex}-${answerIndex}`}
+                              className={`my-0`}
+                            >{`${
+                              cuestion.yourMark < 1 ? "👉" : "➕"
+                            } ${answer}`}</p>
+                          ))}
                       </div>
                     </div>
                   ))}
-                  <button
-                    onClick={() => {
-                      exitQuiz(true);
-                    }}
-                    className={`option w-100 text-center btn text-white py-2 px-3 mt-3 rounded btn-dark bg-success`}
-                  >
-                    Return to main menu
-                  </button>
                 </div>
+                <button
+                  onClick={() => {
+                    exitQuiz(true);
+                  }}
+                  className={`option w-100 text-center btn text-white py-2 px-3 mt-3 rounded btn-dark bg-success`}
+                >
+                  Return to main menu
+                </button>
               </div>
             ) : (
-              <div
-                className="card p-4"
-                style={{
-                  background: "#3d3d3d",
-                  borderColor: "#646464",
-                  borderWidth: "1px",
-                }}
-              >
+              <div className="cyanCard card p-4">
                 <div className="d-flex justify-content-between gap-md-3">
                   <h5 className="mb-2 fs-normal lh-base">
                     {cuestion?.question

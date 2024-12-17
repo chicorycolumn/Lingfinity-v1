@@ -62,7 +62,6 @@ const strip = (s, modifiers) => {
 };
 
 const checkIfOneCharacterOut = (shorterAnswer, longerAnswer) => {
-  console.log({ shorterAnswer, longerAnswer });
   let longerAnswerModified = [];
   let errorCount = 0;
 
@@ -144,43 +143,75 @@ export const validateAnswer = (
   modifiers,
   allAnswers
 ) => {
+  let res;
   let playerAnswerStripped = strip(playerAnswer, modifiers);
   let correctArrStripped = correctArr.map((s) => strip(s, modifiers));
 
-  if (correctArrStripped.includes(playerAnswerStripped)) {
-    return 1;
+  const getIndexOfMatchingCorrectAnswer = (
+    arr,
+    arrUnmodified,
+    str,
+    score,
+    cb = (a, b) => a === b
+  ) => {
+    let res;
+    arr.forEach((el, index) => {
+      if (cb(el, str)) {
+        res = [score, arrUnmodified[index]];
+      }
+    });
+    return res;
+  };
+
+  res = getIndexOfMatchingCorrectAnswer(
+    correctArrStripped,
+    correctArr,
+    playerAnswerStripped,
+    1
+  );
+  if (res) {
+    return res;
   }
 
   let halfCorrectArrStripped = halfCorrectArr.map((s) => strip(s, modifiers));
-  if (halfCorrectArrStripped.includes(playerAnswerStripped)) {
-    return 0.5;
+
+  res = getIndexOfMatchingCorrectAnswer(
+    halfCorrectArrStripped,
+    halfCorrectArr,
+    playerAnswerStripped,
+    0.5
+  );
+  if (res) {
+    return res;
   }
 
   let allAnswersStripped = allAnswers.map((s) => strip(s, modifiers));
 
-  if (
-    correctArrStripped.some((correctAnswerStripped) =>
-      checkIfAnswerIfOneCharacterOut(
-        correctAnswerStripped,
-        playerAnswerStripped,
-        allAnswersStripped
-      )
-    )
-  ) {
-    return 1;
+  const checkOneCharacterCurried = (a, b) => {
+    return checkIfAnswerIfOneCharacterOut(a, b, allAnswersStripped);
+  };
+
+  res = getIndexOfMatchingCorrectAnswer(
+    correctArrStripped,
+    correctArr,
+    playerAnswerStripped,
+    1,
+    checkOneCharacterCurried
+  );
+  if (res) {
+    return res;
   }
 
-  if (
-    halfCorrectArrStripped.some((halfCorrectAnswerStripped) =>
-      checkIfAnswerIfOneCharacterOut(
-        halfCorrectAnswerStripped,
-        playerAnswerStripped,
-        allAnswersStripped
-      )
-    )
-  ) {
-    return 0.5;
+  res = getIndexOfMatchingCorrectAnswer(
+    halfCorrectArrStripped,
+    halfCorrectArr,
+    playerAnswerStripped,
+    0.5,
+    checkOneCharacterCurried
+  );
+  if (res) {
+    return res;
   }
 
-  return 0;
+  return [0, null];
 };

@@ -17,7 +17,7 @@ export const DataProvider = ({ children }) => {
   const [totalCorrect, setTotalCorrect] = useState(0);
   const [scoreJustReceived, setScoreJustReceived] = useState(0);
   const [optionsHaveChanged, setOptionsHaveChanged] = useState();
-  const [useDummyData, setUseDummyData] = useState();
+  const [useDummyData, setUseDummyData] = useState(true);
 
   // Display Controlling States
   const [showStart, setShowStart] = useState(true);
@@ -57,7 +57,7 @@ export const DataProvider = ({ children }) => {
     let langA = "ENG";
     let formulaTopics = null;
     let formulaDifficulty = null;
-    let iterations = 2;
+    let iterations = 4;
 
     if (useDummyData) {
       let dummyDatums = [
@@ -113,7 +113,7 @@ export const DataProvider = ({ children }) => {
     let answers = cuestion.answers;
     let halfMarkAnswers = cuestion.halfMarkAnswers;
     let allAnswers = cuestion.allAnswers || [];
-    let mark = dataU.validateAnswer(
+    let [mark, answerYouMatched] = dataU.validateAnswer(
       selected,
       answers,
       halfMarkAnswers,
@@ -123,6 +123,10 @@ export const DataProvider = ({ children }) => {
 
     cuestion["yourAnswer"] = selected;
     cuestion["yourMark"] = mark;
+    cuestion["answerYouMatched"] = answerYouMatched;
+    cuestion["answers"].sort(
+      (a, b) => Number(b === answerYouMatched) - Number(a === answerYouMatched)
+    );
 
     if (!selectedAnswer) {
       setCuestionIsFinished(true);

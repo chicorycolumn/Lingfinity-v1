@@ -9,7 +9,7 @@ export const fetchPalette = (
   langA,
   formulaTopics,
   formulaDifficulty,
-  iterations = 2
+  iterations = 1
 ) => {
   let baseString = `${baseUrl}/palette?`;
   let envString = `envir=${beEnv}`;
