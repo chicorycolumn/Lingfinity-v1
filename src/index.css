@@ -77,3 +77,38 @@ input::-webkit-inner-spin-button {
 input[type="number"] {
   -moz-appearance: textfield;
 }
+
+.redCard {
+  height: 100%;
+  width: 100%;
+  flex-direction: column;
+  position: fixed;
+  border: red solid 2px;
+}
+
+.orangeCard {
+  height: 100%;
+  border: orange solid 2px;
+}
+
+.yellowCard {
+  border: yellow solid 2px;
+}
+
+.greenCard {
+  max-height: 100%;
+  border: limegreen solid 2px;
+}
+
+.cyanCard {
+  background: #3d3d3d;
+  border-color: #646464;
+  border-width: 1px;
+  border: cyan solid 2px;
+}
+
+.blueCard {
+  max-height: 60vh;
+  overflow-y: scroll;
+  border: blue solid 2px;
+}

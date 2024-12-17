@@ -1,6 +1,6 @@
 import React, { useContext } from "react";
 import DataContext from "../context/dataContext";
-import mainLogo from ".././logo_512.png";
+import mainLogo from ".././logo512.png";
 
 const Start = () => {
   const { startQuiz, showStart, useDummyData, setUseDummyData } =
