@@ -32,6 +32,25 @@ const Quiz = () => {
   }, [showRound, playerCuestionIndex]);
 
   useEffect(() => {
+    const listenForEnter = (event) => {
+      if (event.key === "Enter") {
+        event.preventDefault();
+        exitQuiz(true);
+      }
+    };
+
+    if (showSummary) {
+      setTimeout(() => {
+        document.addEventListener("keyup", listenForEnter);
+      }, 1000);
+    }
+
+    return () => {
+      document.removeEventListener("keyup", listenForEnter);
+    };
+  }, [showSummary]);
+
+  useEffect(() => {
     const listenForEscape = (event) => {
       if (event.key === "Escape") {
         event.preventDefault();
@@ -296,6 +315,7 @@ const Quiz = () => {
                   ))}
                 </div>
                 <button
+                  id="button:returnToMainMenu"
                   onClick={() => {
                     exitQuiz(true);
                   }}
