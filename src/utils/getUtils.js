@@ -34,11 +34,14 @@ export const fetchPalette = (
     .then((res) => {
       let responseObjArr = res.data;
       console.log(`Received ${responseObjArr.length}`);
-      return responseObjArr.map((responseObj) => formatCuestion(responseObj));
+      let datums = responseObjArr.map((responseObj) =>
+        formatCuestion(responseObj)
+      );
+      return { datums };
     })
     .catch((err) => {
       console.log("fetchPalette ERROR", err);
-      return [];
+      return { datums: [], err };
     });
 };
 

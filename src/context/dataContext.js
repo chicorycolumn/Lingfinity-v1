@@ -31,11 +31,17 @@ export const DataProvider = ({ children }) => {
 
   // Set a Single Cuestion
   useEffect(() => {
-    if (round) {
-      if (round?.datums.length > cuestionIndex) {
-        setCuestion((prevCuestion) => {
-          return round.datums[cuestionIndex];
-        });
+    if (round && round.roundLength) {
+      if (round.roundLength > cuestionIndex) {
+        if (round?.datums.length <= cuestionIndex) {
+          dispU.startSpinner("purple");
+          document.getElementById("submitAnswerButton").disabled = true;
+          document.getElementById("writeAnswerField").disabled = true;
+        } else {
+          setCuestion((prevCuestion) => {
+            return round.datums[cuestionIndex];
+          });
+        }
       } else {
         if (cuestionIndex === 0) {
           alert("Something went wrong, no questions generated for this round.");
@@ -44,6 +50,14 @@ export const DataProvider = ({ children }) => {
         }
       }
     }
+    return () => {
+      dispU.stopSpinner();
+      if (round?.datums.length >= cuestionIndex) {
+        document.getElementById("submitAnswerButton").disabled = false;
+        document.getElementById("writeAnswerField").disabled = false;
+        document.getElementById("writeAnswerField").focus();
+      }
+    };
   }, [round, cuestionIndex]);
 
   const setQuiz = (datums) => {
@@ -54,7 +68,7 @@ export const DataProvider = ({ children }) => {
           title: "Title here",
           datums,
           ignorePunctuation: true,
-          meaninglessCounter: 0,
+          roundLength: 10,
         };
       }
 
@@ -132,14 +146,24 @@ export const DataProvider = ({ children }) => {
       console.log(`Requesting #${datumsTotalLength + 1}`);
       getUtils
         .fetchPalette(beEnv, langQ, langA, formulaTopics, formulaDifficulty)
-        .then((datums) => {
-          console.log(`Got #${datumsTotalLength + 1}`);
-          setQuiz(datums);
-          datumsTotalLength += datums.length;
+        .then((res) => {
+          if (res?.err.code === "ERR_NETWORK") {
+            dispU.stopSpinner();
+            alert("Sorry, could not connect to API to get quiz for you.");
+            return;
+          }
+
+          let { datums } = res;
+          if (datums.length) {
+            console.log(`Got #${datumsTotalLength + 1}`);
+            setQuiz(datums);
+            datumsTotalLength += datums.length;
+          }
 
           if (checkTimeout("fetchPalette")) {
             return;
           }
+
           if (datumsTotalLength < 10) {
             fetchPaletteBattery(datumsTotalLength);
           }

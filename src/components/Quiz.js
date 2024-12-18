@@ -26,7 +26,7 @@ const Quiz = () => {
 
   useEffect(() => {
     if (showRound) {
-      document.getElementById("text_input").focus();
+      document.getElementById("writeAnswerField").focus();
       setStartTime(new Date());
     }
   }, [showRound, playerCuestionIndex]);
@@ -42,7 +42,7 @@ const Quiz = () => {
     if (showSummary) {
       setTimeout(() => {
         document.addEventListener("keyup", listenForEnter);
-      }, 1000);
+      }, 2000);
     }
 
     return () => {
@@ -355,7 +355,7 @@ const Quiz = () => {
                 <div>
                   <form>
                     <input
-                      id="text_input"
+                      id="writeAnswerField"
                       type={cuestion?.inputType || "text"}
                       onChange={(e) => {
                         if (cuestionIsFinished) {
@@ -368,6 +368,7 @@ const Quiz = () => {
                       className={`option w-100 text-start btn text-white py-2 px-3 mt-3 rounded btn-dark`} //${correctAnswer === item && "bg-success"}
                     ></input>
                     <button
+                      id="submitAnswerButton"
                       type="submit"
                       className={`option w-100 text-center btn text-white py-2 px-3 mt-3 rounded btn-dark ${wereYouCorrect()}`}
                       disabled={!playerInput}
