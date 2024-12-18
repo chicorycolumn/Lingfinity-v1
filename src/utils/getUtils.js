@@ -33,7 +33,7 @@ export const fetchPalette = (
     )
     .then((res) => {
       let responseObjArr = res.data;
-      console.log(`Received ${responseObjArr.length}`);
+      console.log(`${responseObjArr.length} datums received`);
       let datums = responseObjArr.map((responseObj) =>
         formatCuestion(responseObj)
       );

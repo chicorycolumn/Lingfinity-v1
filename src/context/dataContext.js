@@ -1,4 +1,4 @@
-import { createContext, useState, useEffect } from "react";
+import { createContext, useState, useEffect, useRef } from "react";
 const dataU = require("../utils/dataUtils.js");
 const dispU = require("../utils/displayUtils.js");
 const getUtils = require("../utils/getUtils.js");
@@ -10,6 +10,7 @@ const DataContext = createContext({});
 
 export const DataProvider = ({ children }) => {
   const [round, setRound] = useState();
+  const roundActive = useRef(false);
   const [cuestion, setCuestion] = useState({});
   const [cuestionIndex, setCuestionIndex] = useState(0);
   const [playerCuestionIndex, setPlayerCuestionIndex] = useState(0);
@@ -90,8 +91,42 @@ export const DataProvider = ({ children }) => {
     setShowRound(true);
   };
 
+  const fetchPaletteBattery = (args, datumsTotalLength, checkTimeout) => {
+    console.log(`Fetch question #${datumsTotalLength + 1}`);
+    getUtils.fetchPalette(...args).then((res) => {
+      if (!roundActive.current) {
+        console.log("You exited quiz.");
+        return;
+      }
+
+      if (res?.err?.code === "ERR_NETWORK") {
+        dispU.stopSpinner();
+        alert("Sorry, could not connect to API to get quiz for you.");
+        return;
+      }
+
+      let { datums } = res;
+      if (datums.length) {
+        console.log(`Got question #${datumsTotalLength + 1}`);
+        console.log("");
+        setQuiz(datums);
+        datumsTotalLength += datums.length;
+      }
+
+      if (checkTimeout("fetchPalette")) {
+        return;
+      }
+
+      if (datumsTotalLength < 10) {
+        fetchPaletteBattery(args, datumsTotalLength, checkTimeout);
+      }
+    });
+  };
+
   // Start Quiz
   const startQuiz = (filename) => {
+    roundActive.current = true;
+
     let beEnv = "prod";
     let langQ = "POL";
     let langA = "ENG";
@@ -142,37 +177,13 @@ export const DataProvider = ({ children }) => {
       dispU.stopSpinner
     );
 
-    const fetchPaletteBattery = (datumsTotalLength) => {
-      console.log(`Requesting #${datumsTotalLength + 1}`);
-      getUtils
-        .fetchPalette(beEnv, langQ, langA, formulaTopics, formulaDifficulty)
-        .then((res) => {
-          if (res?.err?.code === "ERR_NETWORK") {
-            dispU.stopSpinner();
-            alert("Sorry, could not connect to API to get quiz for you.");
-            return;
-          }
-
-          let { datums } = res;
-          if (datums.length) {
-            console.log(`Got #${datumsTotalLength + 1}`);
-            setQuiz(datums);
-            datumsTotalLength += datums.length;
-          }
-
-          if (checkTimeout("fetchPalette")) {
-            return;
-          }
-
-          if (datumsTotalLength < 10) {
-            fetchPaletteBattery(datumsTotalLength);
-          }
-        });
-    };
-
     let datumsTotalLength = 0;
     dispU.startSpinner("fuchsia");
-    fetchPaletteBattery(datumsTotalLength);
+    fetchPaletteBattery(
+      [beEnv, langQ, langA, formulaTopics, formulaDifficulty],
+      datumsTotalLength,
+      checkTimeout
+    );
   };
 
   // Check Answer
@@ -232,6 +243,7 @@ export const DataProvider = ({ children }) => {
 
   // Start Over
   const returnToStart = () => {
+    roundActive.current = false;
     setShowRound(false);
     setShowSummary(false);
     setRound();
