@@ -147,7 +147,7 @@ export const DataProvider = ({ children }) => {
       getUtils
         .fetchPalette(beEnv, langQ, langA, formulaTopics, formulaDifficulty)
         .then((res) => {
-          if (res?.err.code === "ERR_NETWORK") {
+          if (res?.err?.code === "ERR_NETWORK") {
             dispU.stopSpinner();
             alert("Sorry, could not connect to API to get quiz for you.");
             return;

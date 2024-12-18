@@ -61,6 +61,26 @@ const strip = (s, modifiers) => {
   return s || s === 0 ? s.toString().toLowerCase().trim() : "";
 };
 
+const checkIfOnePairSwitch = (a, b) => {
+  if (!a || !a.length || !b || !b.length) {
+    return false;
+  }
+
+  for (let i = 1; i < a.length; i++) {
+    let firstMuddleIndex = i - 1;
+    let secondMuddleIndex = i;
+    let muddledA =
+      a.slice(0, firstMuddleIndex) +
+      a[secondMuddleIndex] +
+      a[firstMuddleIndex] +
+      a.slice(secondMuddleIndex + 1, a.length);
+
+    if (muddledA === b) {
+      return true;
+    }
+  }
+};
+
 const checkIfOneCharacterOut = (shorterAnswer, longerAnswer) => {
   let longerAnswerModified = [];
   let errorCount = 0;
@@ -117,6 +137,14 @@ const checkIfAnswerIfOneCharacterOut = (
   }
 
   if (correctAnswerStripped.length === playerAnswerStripped.length) {
+    let correctWithOnePairSwitched = checkIfOnePairSwitch(
+      playerAnswerStripped,
+      correctAnswerStripped
+    );
+    if (correctWithOnePairSwitched) {
+      return true;
+    }
+
     let errorCount = correctAnswerStripped
       .split("")
       .filter((correctChar, index) => {
