@@ -69,7 +69,7 @@ export const DataProvider = ({ children }) => {
           title: "Title here",
           datums,
           ignorePunctuation: true,
-          roundLength: 10,
+          roundLength: useDummyData ? 2 : 10,
         };
       }
 
@@ -136,11 +136,12 @@ export const DataProvider = ({ children }) => {
     if (useDummyData) {
       let dummyDatums = [
         {
-          question: "Sekretarka je melony.",
-          answers: ["The secretary eats melons."],
+          question:
+            "No więc, przypuszczam (🍲, thought) że prawda jest taka, że ta młoda (🍲, age) i miła pilotka je zioła (🍲, food)!",
+          answers: ["The pilot eats herbs."],
           datum: {
-            questionSentenceArr: ["Sekretarka je melony."],
-            answerSentenceArr: ["The secretary eats melons."],
+            questionSentenceArr: ["Pilotka je zioła (🍲, food)."],
+            answerSentenceArr: ["The pilot eats herbs."],
           },
           allAnswers: [],
         },

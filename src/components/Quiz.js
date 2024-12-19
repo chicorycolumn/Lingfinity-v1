@@ -1,5 +1,6 @@
 import React, { useContext, useState, useEffect } from "react";
 import DataContext from "../context/dataContext";
+import Question from "./Cogs/Question.jsx";
 const dispU = require("../utils/displayUtils.js");
 
 const Quiz = () => {
@@ -287,10 +288,13 @@ const Quiz = () => {
                       key={`summaryDiv-${cuestionIndex}`}
                       className={`option w-100 text-start btn text-white pt-1 pb-3 px-3 pt-3 mb-3 rounded btn-dark`} //${correctAnswer === item && "bg-success"}
                     >
-                      <p
-                        key={`summaryQuestion-${cuestionIndex}`}
-                        className={`h4`}
-                      >{`${cuestionIndex + 1}. ${cuestion.question}`}</p>
+                      <Question
+                        cuestion={{
+                          question: `${cuestionIndex + 1}. ${
+                            cuestion.question
+                          }`,
+                        }}
+                      />
                       <p
                         key={`summaryMark-${cuestionIndex}`}
                         className={`mt-3`}
@@ -337,11 +341,8 @@ const Quiz = () => {
             ) : (
               <div className="cyanCard card p-4">
                 <div className="d-flex justify-content-between gap-md-3">
-                  <h5 className="mb-2 fs-normal lh-base">
-                    {cuestion?.question
-                      ? cuestion.question
-                      : "No question found."}
-                  </h5>
+                  <Question cuestion={cuestion} />
+
                   <h5
                     className="primarycolor"
                     style={{

@@ -150,3 +150,8 @@ input[type="number"] {
   top: 0px;
   left: 0px;
 }
+
+.chunkedHeader {
+  display: inline-block;
+  white-space: pre;
+}
