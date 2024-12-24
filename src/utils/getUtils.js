@@ -4,16 +4,16 @@ const baseUrl = "http://localhost:9090/api";
 // const token = localStorage.getItem("currentUserToken");
 
 export const fetchPalette = (
-  beEnv,
-  langQ,
-  langA,
+  langs,
   formulaTopics,
   formulaDifficulty,
   iterations = 1
 ) => {
+  console.log(langs);
+  let beEnv = "prod";
   let baseString = `${baseUrl}/palette?`;
   let envString = `envir=${beEnv}`;
-  let langString = `&questionLanguage=${langQ}&answerLanguage=${langA}`;
+  let langString = `&questionLanguage=${langs[0]}&answerLanguage=${langs[1]}`;
   let topicsString =
     formulaTopics && formulaTopics.length
       ? `&topics=${formulaTopics.join(",")}`

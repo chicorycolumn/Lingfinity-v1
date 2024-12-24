@@ -91,9 +91,14 @@ export const DataProvider = ({ children }) => {
     setShowRound(true);
   };
 
-  const fetchPaletteBattery = (args, datumsTotalLength, checkTimeout) => {
+  const fetchPaletteBattery = (
+    langs,
+    args,
+    datumsTotalLength,
+    checkTimeout
+  ) => {
     console.log(`Fetch question #${datumsTotalLength + 1}`);
-    getUtils.fetchPalette(...args).then((res) => {
+    getUtils.fetchPalette(langs, ...args).then((res) => {
       if (!roundActive.current) {
         console.log("You exited quiz.");
         return;
@@ -106,6 +111,21 @@ export const DataProvider = ({ children }) => {
       }
 
       let { datums } = res;
+
+      datums = datums.filter((outerDatum) => {
+        if (outerDatum.datum?.questionSentenceArr?.length) {
+          return true;
+        } else {
+          if (outerDatum.datum?.questionMessage) {
+            console.log(outerDatum?.datum.questionMessage);
+          }
+          if (outerDatum.datum?.questionErrorMessage) {
+            console.log(outerDatum.datum.questionErrorMessage);
+          }
+          return false;
+        }
+      });
+
       if (datums.length) {
         console.log(`Got question #${datumsTotalLength + 1}`);
         console.log("");
@@ -118,7 +138,12 @@ export const DataProvider = ({ children }) => {
       }
 
       if (datumsTotalLength < 10) {
-        fetchPaletteBattery(args, datumsTotalLength, checkTimeout);
+        fetchPaletteBattery(
+          [langs[1], langs[0]],
+          args,
+          datumsTotalLength,
+          checkTimeout
+        );
       }
     });
   };
@@ -127,9 +152,7 @@ export const DataProvider = ({ children }) => {
   const startQuiz = (filename) => {
     roundActive.current = true;
 
-    let beEnv = "prod";
-    let langQ = "POL";
-    let langA = "ENG";
+    let langs = ["POL", "ENG"];
     let formulaTopics = null;
     let formulaDifficulty = null;
 
@@ -181,7 +204,8 @@ export const DataProvider = ({ children }) => {
     let datumsTotalLength = 0;
     dispU.startSpinner("fuchsia");
     fetchPaletteBattery(
-      [beEnv, langQ, langA, formulaTopics, formulaDifficulty],
+      langs,
+      [formulaTopics, formulaDifficulty],
       datumsTotalLength,
       checkTimeout
     );
