@@ -27,6 +27,8 @@ export const DataProvider = ({ children }) => {
   const [showRound, setShowRound] = useState(false);
   const [showSummary, setShowSummary] = useState(false);
 
+  const desiredQuizLength = 10;
+
   // // Load JSON Data
   // useEffect(() => {}, []);
 
@@ -69,7 +71,7 @@ export const DataProvider = ({ children }) => {
           title: "Title here",
           datums,
           ignorePunctuation: true,
-          roundLength: useDummyData ? 2 : 10,
+          roundLength: useDummyData ? 2 : desiredQuizLength,
         };
       }
 
@@ -95,10 +97,16 @@ export const DataProvider = ({ children }) => {
     langs,
     args,
     datumsTotalLength,
-    checkTimeout
+    checkTimeout,
+    desiredQuizLength,
+    cb
   ) => {
     console.log(`Fetch question #${datumsTotalLength + 1}`);
     getUtils.fetchPalette(langs, ...args).then((res) => {
+      if (cb) {
+        cb();
+      }
+
       if (!roundActive.current) {
         console.log("You exited quiz.");
         return;
@@ -137,19 +145,20 @@ export const DataProvider = ({ children }) => {
         return;
       }
 
-      if (datumsTotalLength < 10) {
+      if (datumsTotalLength < desiredQuizLength) {
         fetchPaletteBattery(
           [langs[1], langs[0]],
           args,
           datumsTotalLength,
-          checkTimeout
+          checkTimeout,
+          desiredQuizLength
         );
       }
     });
   };
 
   // Start Quiz
-  const startQuiz = (formulaTopics) => {
+  const startQuiz = (formulaTopics, cb) => {
     roundActive.current = true;
 
     let langs = ["POL", "ENG"];
@@ -206,7 +215,9 @@ export const DataProvider = ({ children }) => {
       langs,
       [formulaTopics, formulaDifficulty],
       datumsTotalLength,
-      checkTimeout
+      checkTimeout,
+      desiredQuizLength,
+      cb
     );
   };
 

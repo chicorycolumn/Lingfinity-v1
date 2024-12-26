@@ -67,7 +67,10 @@ const Start = () => {
                   desiredFormulaTopicsArray.push(...ft.values.split(","));
                 });
 
-                startQuiz(desiredFormulaTopicsArray);
+                let cb = () => {
+                  setDesiredFormulaTopics([]);
+                };
+                startQuiz(desiredFormulaTopicsArray, cb);
               }}
             >
               {loadingError
