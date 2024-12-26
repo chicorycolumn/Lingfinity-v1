@@ -149,11 +149,10 @@ export const DataProvider = ({ children }) => {
   };
 
   // Start Quiz
-  const startQuiz = (filename) => {
+  const startQuiz = (formulaTopics) => {
     roundActive.current = true;
 
     let langs = ["POL", "ENG"];
-    let formulaTopics = null;
     let formulaDifficulty = null;
 
     if (useDummyData) {

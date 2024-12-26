@@ -1,11 +1,36 @@
-import React, { useContext } from "react";
+import React, { useContext, useState, useEffect } from "react";
 import DataContext from "../context/dataContext";
 import mainLogo from ".././logo512.png";
+const getUtils = require("../utils/getUtils.js");
 
 const Start = () => {
+  const [formulaTopics, setFormulaTopics] = useState(null);
+  const [loadingError, setLoadingError] = useState();
+  const [desiredFormulaTopics, setDesiredFormulaTopics] = useState([]);
+
   const { startQuiz, showStart, useDummyData, setUseDummyData } =
     useContext(DataContext);
-  let roundNames = ["Round 1"];
+
+  useEffect(() => {
+    if (!formulaTopics) {
+      getUtils.fetchFormulaTopics().then((fetchedFormulaTopics) => {
+        if (fetchedFormulaTopics) {
+          setFormulaTopics(
+            fetchedFormulaTopics.map((s) => {
+              let split = s.split("/");
+              return {
+                name: split[1],
+                values: split[0],
+              };
+            })
+          );
+          setLoadingError();
+        } else {
+          setLoadingError("Could not load topics!");
+        }
+      });
+    }
+  }, [formulaTopics]);
 
   return (
     <section
@@ -32,24 +57,85 @@ const Start = () => {
               Lingfinity
             </h1>
 
-            <div
-              className="mt-5 w-75 p-1 d-flex-row align-items-center justify-content-center shadow-primarycolor"
-              style={{
-                display: "block",
-                overflowY: "scroll",
+            <button
+              className={`btn w-50 px-4 mb-3 py-2 text-dark fw-bold bg-light`}
+              disabled={!desiredFormulaTopics.length}
+              onClick={(e) => {
+                e.preventDefault();
+                let desiredFormulaTopicsArray = [];
+                desiredFormulaTopics.forEach((ft) => {
+                  desiredFormulaTopicsArray.push(...ft.values.split(","));
+                });
+
+                startQuiz(desiredFormulaTopicsArray);
               }}
             >
-              {roundNames.map((roundName, roundNameIndex) => (
-                <button
-                  key={`roundName-${roundNameIndex}`}
-                  onClick={() => {
-                    startQuiz(roundName);
-                  }}
-                  className="btn w-100 px-4 mb-1 py-2 bg-light text-dark fw-bold"
-                >
-                  {roundName}
-                </button>
-              ))}
+              {loadingError
+                ? loadingError
+                : desiredFormulaTopics.length
+                ? "Start"
+                : formulaTopics
+                ? "Select topics below"
+                : "Loading topics..."}
+            </button>
+
+            <div className="qontainer">
+              <div className="grid-row">
+                {formulaTopics
+                  ? formulaTopics.map((fTopicObj, fTopicObjIndex) => (
+                      <div
+                        className="grid-item"
+                        key={`grid-item-${fTopicObjIndex}`}
+                      >
+                        <div
+                          className="grid-item-wrapper"
+                          key={`grid-item-wrapper-${fTopicObjIndex}`}
+                        >
+                          <button
+                            key={`fTopicName-${fTopicObjIndex}`}
+                            onDoubleClick={() => {
+                              setDesiredFormulaTopics((prev) =>
+                                prev.length === formulaTopics.length
+                                  ? []
+                                  : formulaTopics
+                              );
+                            }}
+                            onClick={() => {
+                              setDesiredFormulaTopics((prev) => {
+                                if (
+                                  prev.filter(
+                                    (ft) => ft.name === fTopicObj.name
+                                  ).length
+                                ) {
+                                  let res = [];
+                                  prev.forEach((ft) => {
+                                    if (ft.name !== fTopicObj.name) {
+                                      res.push(fTopicObj);
+                                    }
+                                  });
+                                  return res;
+                                } else {
+                                  let res = [...prev];
+                                  res.push(fTopicObj);
+                                  return res;
+                                }
+                              });
+                            }}
+                            className={`btn text-dark fw-bold ${
+                              desiredFormulaTopics.filter(
+                                (ft) => ft.name === fTopicObj.name
+                              ).length
+                                ? "bg-success"
+                                : "bg-light"
+                            } grid-item-qontainer`}
+                          >
+                            {fTopicObj.name}
+                          </button>
+                        </div>
+                      </div>
+                    ))
+                  : ""}
+              </div>
             </div>
           </div>
         </div>

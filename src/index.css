@@ -155,3 +155,88 @@ input[type="number"] {
   display: inline-block;
   white-space: pre;
 }
+
+.qontainer {
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.grid-row {
+  display: flex;
+  flex-flow: row wrap;
+  justify-content: center;
+}
+
+.grid-item {
+  height: 80px;
+  flex-basis: 20%;
+  -ms-flex: auto;
+  width: 250px;
+  min-width: 250px;
+  position: relative;
+  padding: 10px;
+  box-sizing: border-box;
+}
+
+.grid-item-wrapper {
+  -webkit-box-sizing: initial;
+  -moz-box-sizing: initial;
+  box-sizing: initial;
+  background: #aaa;
+  margin: 0;
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+  -webkit-transition: padding 0.15s cubic-bezier(0.4, 0, 0.2, 1),
+    margin 0.15s cubic-bezier(0.4, 0, 0.2, 1),
+    box-shadow 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: padding 0.15s cubic-bezier(0.4, 0, 0.2, 1),
+    margin 0.15s cubic-bezier(0.4, 0, 0.2, 1),
+    box-shadow 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+}
+
+.grid-item-qontainer {
+  height: 100%;
+  width: 100%;
+  position: relative;
+}
+
+.grid-item:hover .grid-item-wrapper {
+  padding: 2% 2%;
+  margin: -2% -2%;
+}
+
+@media (max-width: 1333px) {
+  .grid-item {
+    flex-basis: 33.33%;
+  }
+}
+
+@media (max-width: 1073px) {
+  .grid-item {
+    flex-basis: 33.33%;
+  }
+}
+
+@media (max-width: 815px) {
+  .grid-item {
+    flex-basis: 50%;
+  }
+}
+
+@media (max-width: 620px) {
+  .col {
+    clear: both;
+    float: none;
+    margin-left: auto;
+    margin-right: auto;
+    width: auto !important;
+  }
+}
+
+@media (max-width: 555px) {
+  .grid-item {
+    flex-basis: 100%;
+  }
+}

@@ -53,3 +53,18 @@ export const formatCuestion = (datum) => {
 
   return cuestion;
 };
+
+export const fetchFormulaTopics = () => {
+  return axios
+    .get(
+      `${baseUrl}/educator/formulatopics`
+      // ,{headers: { Authorization: `BEARER ${token}` }}
+    )
+    .then((res) => {
+      return res.data || [];
+    })
+    .catch((err) => {
+      console.log("fetchFormulaTopics ERROR", err);
+      return null;
+    });
+};
