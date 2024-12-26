@@ -32,6 +32,13 @@ const Start = () => {
     }
   }, [formulaTopics]);
 
+  const randomIsSelected = (fTopicObj) => {
+    return (
+      fTopicObj.name !== "Random" &&
+      desiredFormulaTopics.some((ftObj) => ftObj.name === "Random")
+    );
+  };
+
   return (
     <section
       className="text-white text-center bg-dark"
@@ -96,6 +103,7 @@ const Start = () => {
                         >
                           <button
                             key={`fTopicName-${fTopicObjIndex}`}
+                            disabled={randomIsSelected(fTopicObj)}
                             onDoubleClick={() => {
                               setDesiredFormulaTopics((prev) =>
                                 prev.length === formulaTopics.length
@@ -127,7 +135,7 @@ const Start = () => {
                             className={`btn text-dark fw-bold ${
                               desiredFormulaTopics.filter(
                                 (ft) => ft.name === fTopicObj.name
-                              ).length
+                              ).length && !randomIsSelected(fTopicObj)
                                 ? "bg-success"
                                 : "bg-light"
                             } grid-item-qontainer`}
